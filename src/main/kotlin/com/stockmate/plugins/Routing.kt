@@ -15,6 +15,7 @@ fun Application.configureRouting() {
     val documentRepo = DocumentRepository()
     val replenishmentRepo = ReplenishmentRepository()
     val inventoryRepo = InventoryRepository()
+    val reportRepo = ReportRepository()
 
     routing {
         get("/health") {
@@ -25,5 +26,6 @@ fun Application.configureRouting() {
         warehouseRoutes(warehouseRepo)
         documentRoutes(documentRepo)
         replenishmentRoutes(replenishmentRepo, inventoryRepo)
+        reportRoutes(reportRepo)
     }
 }
