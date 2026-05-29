@@ -1,9 +1,11 @@
 package com.stockmate.plugins
 
+import com.stockmate.repositories.DocumentRepository
 import com.stockmate.repositories.ProductRepository
 import com.stockmate.repositories.UserRepository
 import com.stockmate.repositories.WarehouseRepository
 import com.stockmate.routing.authRoutes
+import com.stockmate.routing.documentRoutes
 import com.stockmate.routing.productRoutes
 import com.stockmate.routing.warehouseRoutes
 import com.stockmate.services.AuthService
@@ -16,6 +18,7 @@ fun Application.configureRouting() {
     val authService = AuthService(userRepo)
     val productRepo = ProductRepository()
     val warehouseRepo = WarehouseRepository()
+    val documentRepo = DocumentRepository()
 
     routing {
         get("/health") {
@@ -24,5 +27,6 @@ fun Application.configureRouting() {
         authRoutes(authService)
         productRoutes(productRepo)
         warehouseRoutes(warehouseRepo)
+        documentRoutes(documentRepo)
     }
 }
