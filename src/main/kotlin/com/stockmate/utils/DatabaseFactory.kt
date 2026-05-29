@@ -45,6 +45,6 @@ object DatabaseFactory {
         application.environment.log.info("Database connected and schema created")
     }
 
-    suspend fun <T> query(block: () -> T): T =
+    suspend fun <T> query(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 }
