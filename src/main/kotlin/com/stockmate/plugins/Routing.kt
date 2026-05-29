@@ -1,13 +1,7 @@
 package com.stockmate.plugins
 
-import com.stockmate.repositories.DocumentRepository
-import com.stockmate.repositories.ProductRepository
-import com.stockmate.repositories.UserRepository
-import com.stockmate.repositories.WarehouseRepository
-import com.stockmate.routing.authRoutes
-import com.stockmate.routing.documentRoutes
-import com.stockmate.routing.productRoutes
-import com.stockmate.routing.warehouseRoutes
+import com.stockmate.repositories.*
+import com.stockmate.routing.*
 import com.stockmate.services.AuthService
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -19,6 +13,8 @@ fun Application.configureRouting() {
     val productRepo = ProductRepository()
     val warehouseRepo = WarehouseRepository()
     val documentRepo = DocumentRepository()
+    val replenishmentRepo = ReplenishmentRepository()
+    val inventoryRepo = InventoryRepository()
 
     routing {
         get("/health") {
@@ -28,5 +24,6 @@ fun Application.configureRouting() {
         productRoutes(productRepo)
         warehouseRoutes(warehouseRepo)
         documentRoutes(documentRepo)
+        replenishmentRoutes(replenishmentRepo, inventoryRepo)
     }
 }
