@@ -6,6 +6,12 @@ import kotlinx.serialization.Serializable
 data class LoginRequest(val email: String, val password: String)
 
 @Serializable
+data class RegisterRequest(val email: String, val password: String, val fullName: String)
+
+@Serializable
+data class RegisterResponse(val id: Int, val email: String, val fullName: String, val role: String)
+
+@Serializable
 data class LoginResponse(val accessToken: String, val refreshToken: String, val role: String)
 
 @Serializable

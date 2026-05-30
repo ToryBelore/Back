@@ -2,11 +2,21 @@ package com.stockmate.services
 
 import com.stockmate.models.dto.LoginResponse
 import com.stockmate.models.dto.RefreshResponse
+import com.stockmate.models.dto.RegisterResponse
 import com.stockmate.repositories.UserRepository
 import com.stockmate.utils.JwtUtils
 import java.time.LocalDateTime
 
 class AuthService(private val userRepo: UserRepository) {
+
+    suspend fun register(email: String, password: String, fullName: String): RegisterResponse {
+        require(email.isNotBlank()) { "Email is required" }
+        require(password.length >= 6) { "Password must be at least 6 characters" }
+        require(fullName.isNotBlank()) { "Name is required" }
+        require(userRepo.findByEmail(email) == null) { "Email already registered" }
+        val user = userRepo.create(email.trim(), password, fullName.trim(), "Warehouse")
+        return RegisterResponse(user.id, user.email, user.fullName, user.role)
+    }
 
     suspend fun login(email: String, password: String): LoginResponse? {
         val user = userRepo.checkPassword(email, password) ?: return null

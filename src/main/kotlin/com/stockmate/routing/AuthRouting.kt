@@ -2,6 +2,7 @@ package com.stockmate.routing
 
 import com.stockmate.models.dto.LoginRequest
 import com.stockmate.models.dto.RefreshRequest
+import com.stockmate.models.dto.RegisterRequest
 import com.stockmate.services.AuthService
 import io.ktor.http.*
 import io.ktor.server.auth.*
@@ -12,6 +13,16 @@ import io.ktor.server.routing.*
 
 fun Route.authRoutes(authService: AuthService) {
     route("/api/v1/auth") {
+        post("/register") {
+            val req = call.receive<RegisterRequest>()
+            try {
+                val response = authService.register(req.email, req.password, req.fullName)
+                call.respond(HttpStatusCode.Created, response)
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, mapOf("message" to (e.message ?: "Registration failed")))
+            }
+        }
+
         post("/login") {
             val req = call.receive<LoginRequest>()
             require(req.email.isNotBlank()) { "Email is required" }
