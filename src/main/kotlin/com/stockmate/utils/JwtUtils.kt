@@ -15,11 +15,17 @@ object JwtUtils {
 
     fun init(application: Application) {
         val config = application.environment.config
-        secret = config.property("jwt.secret").getString()
-        issuer = config.property("jwt.issuer").getString()
-        audience = config.property("jwt.audience").getString()
-        accessTtlMs = (config.propertyOrNull("jwt.expiration")?.getString()?.toLong() ?: 3600) * 1000L
-        refreshTtlMs = (config.propertyOrNull("jwt.refreshExpiration")?.getString()?.toLong() ?: 2592000) * 1000L
+        secret = System.getenv("JWT_SECRET")
+            ?: config.propertyOrNull("jwt.secret")?.getString()
+            ?: "stockmate-secret-key-change-in-production"
+        issuer = config.propertyOrNull("jwt.issuer")?.getString() ?: "stockmate"
+        audience = config.propertyOrNull("jwt.audience")?.getString() ?: "stockmate-users"
+        accessTtlMs = (System.getenv("JWT_EXPIRATION")?.toLongOrNull()
+            ?: config.propertyOrNull("jwt.expiration")?.getString()?.toLong()
+            ?: 3600) * 1000L
+        refreshTtlMs = (System.getenv("JWT_REFRESH_EXPIRATION")?.toLongOrNull()
+            ?: config.propertyOrNull("jwt.refreshExpiration")?.getString()?.toLong()
+            ?: 2592000) * 1000L
     }
 
     fun generateAccessToken(userId: Int, role: String): String {

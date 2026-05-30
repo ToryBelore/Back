@@ -7,7 +7,9 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 
 fun Application.configureAuth() {
-    val jwtSecret = environment.config.propertyOrNull("jwt.secret")?.getString() ?: "secret"
+    val jwtSecret = System.getenv("JWT_SECRET")
+        ?: environment.config.propertyOrNull("jwt.secret")?.getString()
+        ?: "stockmate-secret-key-change-in-production"
     val jwtIssuer = environment.config.propertyOrNull("jwt.issuer")?.getString() ?: "stockmate"
     val jwtAudience = environment.config.propertyOrNull("jwt.audience")?.getString() ?: "stockmate-users"
 

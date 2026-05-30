@@ -14,9 +14,15 @@ object DatabaseFactory {
 
     fun init(application: Application) {
         val config = application.environment.config
-        val url = config.property("database.url").getString()
-        val user = config.property("database.user").getString()
-        val password = config.property("database.password").getString()
+        val url = System.getenv("DATABASE_URL")
+            ?: config.propertyOrNull("database.url")?.getString()
+            ?: "jdbc:postgresql://localhost:5432/stockmate"
+        val user = System.getenv("DATABASE_USER")
+            ?: config.propertyOrNull("database.user")?.getString()
+            ?: "postgres"
+        val password = System.getenv("DATABASE_PASSWORD")
+            ?: config.propertyOrNull("database.password")?.getString()
+            ?: "postgres"
 
         val hikariConfig = HikariConfig().apply {
             jdbcUrl = url
