@@ -19,8 +19,6 @@ class DocumentRepository {
     ): DocumentListResponse = query {
         val q = Documents
             .join(Users, JoinType.INNER, Documents.createdBy, Users.id)
-            .join(Warehouses.alias("wf"), JoinType.LEFT, Documents.warehouseFromId, Warehouses.id)
-            .join(Warehouses.alias("wt"), JoinType.LEFT, Documents.warehouseToId, Warehouses.id)
             .selectAll()
         if (type != null) q.andWhere { Documents.type eq type }
         if (status != null) q.andWhere { Documents.status eq status }

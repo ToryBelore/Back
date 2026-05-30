@@ -13,13 +13,17 @@ class ReplenishmentRepository {
 
     private val fmt = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
+    private val cbAlias = Users.alias("cb")
+    private val atAlias = Users.alias("at")
+
+    private fun baseQuery() = ReplenishmentRequests
+        .join(Products, JoinType.INNER, ReplenishmentRequests.productId, Products.id)
+        .join(Warehouses, JoinType.INNER, ReplenishmentRequests.warehouseId, Warehouses.id)
+        .join(cbAlias, JoinType.INNER, ReplenishmentRequests.createdBy, cbAlias[Users.id])
+        .join(atAlias, JoinType.LEFT, ReplenishmentRequests.assignedTo, atAlias[Users.id])
+
     suspend fun list(status: String?): List<ReplenishmentRequestDto> = query {
-        val q = ReplenishmentRequests
-            .join(Products, JoinType.INNER, ReplenishmentRequests.productId, Products.id)
-            .join(Warehouses, JoinType.INNER, ReplenishmentRequests.warehouseId, Warehouses.id)
-            .join(Users.alias("cb"), JoinType.INNER, ReplenishmentRequests.createdBy, Users.id)
-            .join(Users.alias("at"), JoinType.LEFT, ReplenishmentRequests.assignedTo, Users.id)
-            .selectAll()
+        val q = baseQuery().selectAll()
         if (status != null) q.andWhere { ReplenishmentRequests.status eq status }
         q.orderBy(ReplenishmentRequests.createdAt to SortOrder.DESC).map { it.toDto() }
     }
@@ -38,12 +42,7 @@ class ReplenishmentRepository {
     }
 
     suspend fun findById(id: Int): ReplenishmentRequestDto? = query {
-        ReplenishmentRequests
-            .join(Products, JoinType.INNER, ReplenishmentRequests.productId, Products.id)
-            .join(Warehouses, JoinType.INNER, ReplenishmentRequests.warehouseId, Warehouses.id)
-            .join(Users.alias("cb"), JoinType.INNER, ReplenishmentRequests.createdBy, Users.id)
-            .join(Users.alias("at"), JoinType.LEFT, ReplenishmentRequests.assignedTo, Users.id)
-            .selectAll().where { ReplenishmentRequests.id eq id }
+        baseQuery().selectAll().where { ReplenishmentRequests.id eq id }
             .map { it.toDto() }
             .singleOrNull()
     }
@@ -58,8 +57,6 @@ class ReplenishmentRepository {
     }
 
     private fun ResultRow.toDto(): ReplenishmentRequestDto {
-        val cbAlias = Users.alias("cb")
-        val atAlias = Users.alias("at")
         return ReplenishmentRequestDto(
             id = this[ReplenishmentRequests.id].value,
             productId = this[Products.id].value,
