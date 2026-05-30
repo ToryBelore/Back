@@ -17,17 +17,22 @@ fun Application.configureRouting() {
     val inventoryRepo = InventoryRepository()
     val reportRepo = ReportRepository()
     val notificationRepo = NotificationRepository()
+    val counterpartyRepo = CounterpartyRepository()
+    val batchRepo = BatchRepository()
 
     routing {
         get("/health") {
             call.respondText("OK")
         }
         authRoutes(authService)
+        userRoutes(userRepo)
         productRoutes(productRepo)
         warehouseRoutes(warehouseRepo)
         documentRoutes(documentRepo)
         replenishmentRoutes(replenishmentRepo, inventoryRepo)
         reportRoutes(reportRepo)
         notificationRoutes(notificationRepo)
+        counterpartyRoutes(counterpartyRepo)
+        batchRoutes(batchRepo)
     }
 }

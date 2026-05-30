@@ -60,6 +60,9 @@ data class InventoryActualInput(
     val actualQty: Double
 )
 
+// alias used by Android client
+typealias ReplenishmentDto = ReplenishmentRequestDto
+
 @Serializable
 data class StartInventoryRequest(val warehouseId: Int)
 
